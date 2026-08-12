@@ -1,0 +1,42 @@
+name: reserve-names
+
+# MCP servers resolve last-wins, so two plugins declaring the same server name means the
+# later one silently captures the earlier one's tools. This is the only place that can
+# be caught centrally.
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  names:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every published plugin slug is reserved
+        run: |
+          node -e '
+            const mk = require("./.claude-plugin/marketplace.json");
+            const reg = require("./names/plugin-slugs.json").reserved.map(r => r.slug);
+            const missing = mk.plugins.map(p => p.name).filter(n => !reg.includes(n));
+            if (missing.length) {
+              console.error("published but not reserved:", missing.join(", "));
+              process.exit(1);
+            }
+          '
+
+      - name: No duplicate MCP server names
+        run: |
+          node -e '
+            const reg = require("./names/mcp-servers.json").reserved;
+            const seen = new Map();
+            for (const r of reg) {
+              if (seen.has(r.server)) {
+                console.error(`duplicate server name ${r.server}: ${seen.get(r.server)} and ${r.plugin}`);
+                process.exit(1);
+              }
+              seen.set(r.server, r.plugin);
+            }
+          '

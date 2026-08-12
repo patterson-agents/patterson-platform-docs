@@ -1,0 +1,4 @@
+{"prompt": "[TBD] a request that SHOULD trigger this skill", "should_trigger": true}
+{"prompt": "[TBD] another phrasing that should trigger it", "should_trigger": true}
+{"prompt": "[TBD] a nearby request that should NOT trigger it", "should_trigger": false}
+{"prompt": "[TBD] an unrelated request", "should_trigger": false}

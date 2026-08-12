@@ -1,0 +1,158 @@
+#!/usr/bin/env bun
+// Copy a blueprint from templates/, substitute {{PLACEHOLDERS}}, rename _prototype dirs.
+
+import { readdir, mkdir, stat, readFile, writeFile, chmod } from "node:fs/promises";
+import { join, dirname, relative } from "node:path";
+
+const SKILL_DIR = join(import.meta.dir, "..");
+const TEMPLATES = join(SKILL_DIR, "templates");
+
+type Vars = Record<string, string>;
+
+const argv = Bun.argv.slice(2);
+const flag = (name: string): string | undefined => {
+  const i = argv.indexOf(`--${name}`);
+  return i >= 0 ? argv[i + 1] : undefined;
+};
+const has = (name: string) => argv.includes(`--${name}`);
+
+async function blueprints(): Promise<string[]> {
+  const entries = await readdir(TEMPLATES, { withFileTypes: true });
+  return entries.filter((e) => e.isDirectory() && !e.name.startsWith("_")).map((e) => e.name).sort();
+}
+
+async function walk(dir: string, out: string[] = []): Promise<string[]> {
+  for (const e of await readdir(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) await walk(p, out);
+    else out.push(p);
+  }
+  return out;
+}
+
+const substitute = (text: string, vars: Vars) =>
+  text.replace(/\{\{([A-Z_]+)\}\}/g, (whole, key) => vars[key] ?? whole);
+
+// Prototype directories are renamed from a variable: _exemplar, _role, _domain.
+const PROTOTYPE: Record<string, string> = {
+  _exemplar: "conventions",
+  _role: "ROLE",
+  _domain: "DEPT_DOMAIN",
+};
+
+function renamePrototypes(path: string, vars: Vars): string {
+  return path
+    .split("/")
+    .map((seg) => {
+      if (!(seg in PROTOTYPE)) return seg;
+      const target = PROTOTYPE[seg];
+      return vars[target] ?? target.toLowerCase();
+    })
+    .join("/");
+}
+
+async function isEmpty(dir: string): Promise<boolean> {
+  try {
+    return (await readdir(dir)).length === 0;
+  } catch {
+    return true;
+  }
+}
+
+async function gitConfig(key: string): Promise<string | undefined> {
+  try {
+    const out = await Bun.$`git config ${key}`.quiet().text();
+    return out.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function collectVars(): Promise<Vars> {
+  const vars: Vars = {};
+  const required = ["org:ORG", "prefix:PLATFORM_PREFIX", "marketplace:MARKETPLACE_NAME", "owner:OWNER_NAME"];
+  const missing: string[] = [];
+
+  for (const pair of required) {
+    const [f, key] = pair.split(":");
+    const v = flag(f);
+    if (v) vars[key] = v;
+    else missing.push(`--${f}`);
+  }
+  if (missing.length) {
+    console.error(`Missing required flags: ${missing.join(", ")}`);
+    console.error("Run with --list to see blueprints, or read templates/README.md for the variable table.");
+    process.exit(1);
+  }
+
+  vars.OWNER_EMAIL = flag("owner-email") ?? (await gitConfig("user.email")) ?? "[TBD]";
+  vars.DEFAULT_BRANCH = flag("branch") ?? "main";
+  vars.SEED_PATH = flag("seed-path") ?? "/opt/agent-seed";
+  if (flag("dept")) vars.DEPT = flag("dept")!;
+  if (flag("domain")) vars.DEPT_DOMAIN = flag("domain")!;
+  if (flag("role")) vars.ROLE = flag("role")!;
+  return vars;
+}
+
+async function emit(name: string, dest: string, vars: Vars, force: boolean) {
+  const src = join(TEMPLATES, name);
+  if (!(await stat(src).catch(() => null))) {
+    console.error(`No blueprint named "${name}". Try --list.`);
+    process.exit(1);
+  }
+  const target = join(dest, name);
+  if (!force && !(await isEmpty(target))) {
+    console.error(`Refusing to write into non-empty ${target}. Pass --force to override.`);
+    process.exit(1);
+  }
+
+  const files = await walk(src);
+  for (const file of files) {
+    let rel = renamePrototypes(relative(src, file), vars);
+    // Template skills ship as SKILL.template.md so the packaged skill contains
+    // exactly one SKILL.md (importers treat multiple as ambiguous). Scaffolded
+    // output restores the canonical name the harnesses expect.
+    if (rel.endsWith("SKILL.template.md")) rel = rel.replace(/SKILL\.template\.md$/, "SKILL.md");
+    const out = join(target, rel);
+    await mkdir(dirname(out), { recursive: true });
+    const body = substitute(await readFile(file, "utf8"), vars);
+    await writeFile(out, body);
+    if ((await stat(file)).mode & 0o111) await chmod(out, 0o755);
+  }
+  console.log(`  ${name} -> ${target}  (${files.length} files)`);
+}
+
+// ---- main ----
+if (has("list") || argv.length === 0) {
+  const manifest = await readFile(join(TEMPLATES, "_MANIFEST.yaml"), "utf8");
+  console.log("Blueprints:\n");
+  for (const b of await blueprints()) {
+    const m = manifest.match(new RegExp(`^  ${b}:\\n(?:.*\\n)*?    phase: (\\d)`, "m"));
+    console.log(`  ${b.padEnd(22)} phase ${m?.[1] ?? "?"}`);
+  }
+  console.log("\nUsage:\n  scripts/scaffold <blueprint> <dest> --org ORG --prefix P --marketplace M --owner \"Team\"");
+  console.log("  scripts/scaffold --all <dest> --org ORG --prefix P --marketplace M --owner \"Team\"");
+  process.exit(0);
+}
+
+const vars = await collectVars();
+const force = has("force");
+
+if (has("all")) {
+  const dest = argv[argv.indexOf("--all") + 1];
+  if (!dest || dest.startsWith("--")) {
+    console.error("--all needs a destination directory");
+    process.exit(1);
+  }
+  console.log(`Scaffolding all blueprints into ${dest}`);
+  for (const b of await blueprints()) await emit(b, dest, vars, force);
+} else {
+  const [name, dest] = argv;
+  if (!dest || dest.startsWith("--")) {
+    console.error("Usage: scaffold <blueprint> <dest> [flags]");
+    process.exit(1);
+  }
+  await emit(name, dest, vars, force);
+}
+
+console.log("\nNext: scripts/validate <dest>, then fill the [TBD] markers.");

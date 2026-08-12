@@ -1,0 +1,13 @@
+Local skills live here, and they WIN collisions against published ones.
+
+Skills resolve first-found-wins, and this directory sits above plugin skills in the
+chain. A file here with the same name as a published skill shadows it silently: no
+warning, no error, nothing in any log.
+
+That is not necessarily wrong. Under an innersource model, overriding a standard is how
+you signal that the standard is wrong. Open an issue against the source plugin so the
+fix reaches everyone.
+
+This is also the middle stage of the contribution path. A folder here containing
+.claude-plugin/plugin.json loads as <name>@skills-dir on the next session, with no
+marketplace and no install step.

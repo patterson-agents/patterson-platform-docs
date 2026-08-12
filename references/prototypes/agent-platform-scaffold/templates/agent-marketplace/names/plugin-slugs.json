@@ -1,0 +1,10 @@
+{
+  "_comment": "Reserved plugin slugs. A published name is effectively permanent, so reserve generic names before anyone publishes under them. Checked by .github/workflows/reserve-names.yml.",
+  "reserved": [
+    { "slug": "{{PLATFORM_PREFIX}}-conventions", "owner": "{{OWNER_NAME}}", "status": "published" },
+    { "slug": "{{PLATFORM_PREFIX}}-core",        "owner": "{{OWNER_NAME}}", "status": "published" },
+    { "slug": "{{PLATFORM_PREFIX}}-preset-backend", "owner": "{{OWNER_NAME}}", "status": "published" },
+    { "slug": "{{PLATFORM_PREFIX}}-security",    "owner": "{{OWNER_NAME}}", "status": "reserved" },
+    { "slug": "{{PLATFORM_PREFIX}}-observability","owner": "{{OWNER_NAME}}", "status": "reserved" }
+  ]
+}

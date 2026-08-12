@@ -1,0 +1,17 @@
+{
+  "name": "[TBD] project name",
+  "build": { "dockerfile": "Dockerfile" },
+
+  "_comment_volume": "Mounting ~/.claude alone does NOT preserve sign-in, because the OAuth account, personal MCP servers, and per-project trust live in ~/.claude.json OUTSIDE that directory. CLAUDE_CONFIG_DIR must point at the same path so that file lands inside the volume.",
+
+  "mounts": [
+    "source=claude-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "CLAUDE_CODE_PLUGIN_SEED_DIR": "{{SEED_PATH}}"
+  },
+
+  "remoteUser": "node"
+}

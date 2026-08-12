@@ -1,0 +1,6 @@
+# The platform team owns this repository outright. Nobody else needs write access,
+# because contributions land in source repositories and arrive here through assembly.
+*                       @{{ORG}}/platform-engineering
+
+# The name registries are the one thing worth a second pair of eyes on every change.
+/names/                 @{{ORG}}/platform-engineering

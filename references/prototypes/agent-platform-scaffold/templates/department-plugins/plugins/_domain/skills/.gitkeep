@@ -1,0 +1,5 @@
+Department skills go here, one directory each, with a SKILL.md inside.
+
+Before writing one, check whether a core skill in {{ORG}}/agent-plugins nearly does it.
+Copying a core skill rather than depending on it usually means that skill is missing a
+userConfig option, which is a bug report rather than a reason to fork.

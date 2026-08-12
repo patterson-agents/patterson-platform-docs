@@ -1,0 +1,2 @@
+Files placed in bin/ become bare commands on PATH for every Bash tool call while this
+plugin is enabled. Treat an addition here as a change worth reviewing.

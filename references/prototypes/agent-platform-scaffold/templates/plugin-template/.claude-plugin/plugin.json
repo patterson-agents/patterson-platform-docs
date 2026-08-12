@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schema/plugin/v1.0.0.json",
+  "name": "[TBD-plugin-name]",
+  "displayName": "[TBD] Human-readable name",
+  "description": "[TBD] One sentence on what this does",
+  "version": "0.1.0",
+
+  "userConfig": {
+    "example_option": {
+      "type": "string",
+      "title": "Example option",
+      "description": "Delete this if the plugin needs no configuration. Kept here so a first-time author sees the mechanism.",
+      "default": ""
+    }
+  },
+
+  "dependencies": [
+    { "name": "{{PLATFORM_PREFIX}}-core", "version": "~0.1.0" }
+  ]
+}

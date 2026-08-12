@@ -1,0 +1,15 @@
+Skills in a preset are usually symlinks into a canonical definition elsewhere in the
+same marketplace, created like this:
+
+  ln -s ../../../../agent-plugins/plugins/conventions/skills/commit-messages .
+
+A symlink resolving elsewhere in the same marketplace is dereferenced at install and the
+target content is copied in place, so the bundle ships a real self-contained skill
+without this repository duplicating anything.
+
+Three resolution cases:
+  inside the plugin's own directory  -> preserved as a relative symlink
+  elsewhere in the same marketplace  -> dereferenced and copied
+  outside the marketplace            -> skipped for security
+
+Original content that belongs only to this preset lives here as a normal directory.

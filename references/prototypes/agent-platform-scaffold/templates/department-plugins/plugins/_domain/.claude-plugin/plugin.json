@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agent-plugins.org/schema/plugin/v1.0.0.json",
+  "name": "{{DEPT}}-{{DEPT_DOMAIN}}",
+  "displayName": "[TBD] Human-readable name",
+  "description": "[TBD] One sentence",
+  "version": "0.1.0",
+
+  "_comment": "A tilde range means a core patch reaches this team automatically while a minor bump does not, until the range is widened deliberately.",
+  "dependencies": [
+    { "name": "{{PLATFORM_PREFIX}}-core", "version": "~0.1.0" }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schema/plugin/v1.0.0.json",
+  "name": "{{PLATFORM_PREFIX}}-conventions",
+  "displayName": "[TBD] Human-readable name",
+  "description": "[TBD] What this plugin does, in one sentence",
+  "version": "0.1.0",
+  "author": { "name": "{{OWNER_NAME}}" },
+
+  "userConfig": {
+    "ticket_prefix": {
+      "type": "string",
+      "title": "Ticket prefix",
+      "description": "Prefix used in commit trailers, for example ACME",
+      "default": "[TBD]"
+    },
+    "strict_review": {
+      "type": "boolean",
+      "title": "Strict review",
+      "description": "Fail the review agent on style violations rather than warning",
+      "default": false
+    }
+  },
+
+  "dependencies": [
+    { "name": "{{PLATFORM_PREFIX}}-core", "version": "~0.1.0" }
+  ]
+}

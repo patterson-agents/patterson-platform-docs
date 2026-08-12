@@ -1,0 +1,4 @@
+Copilot CLI reads this path BEFORE .agents/skills and .claude/skills.
+
+A skill placed here therefore reaches both Copilot and Claude Code users, which makes it
+the right location for anything a mixed team needs.

@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate every plugin
+        run: |
+          for p in plugins/*/; do
+            echo "validating $p"
+            npx --yes @anthropic-ai/claude-code plugin validate "$p" --strict
+          done
+
+      - name: Report token cost
+        # Always-on tokens are added to every session by skill and agent descriptions,
+        # whether or not anything fires. A plugin costing a thousand always-on tokens is
+        # a bad plugin regardless of content quality.
+        run: |
+          for p in plugins/*/; do
+            npx --yes @anthropic-ai/claude-code plugin details "$p" || true
+          done

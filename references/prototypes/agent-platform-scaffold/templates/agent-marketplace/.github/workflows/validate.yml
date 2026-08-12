@@ -1,0 +1,32 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate marketplace and every referenced plugin
+        # Strict mode turns warnings into errors, which catches a misspelled field or a
+        # leftover field from another tool's manifest before it ships.
+        run: npx --yes @anthropic-ai/claude-code plugin validate . --strict
+
+      - name: Check renames map is append-only and acyclic
+        run: |
+          # `claude plugin validate` rejects cycles. This additionally guards against a
+          # rename being removed, which would strand anyone still on the old slug.
+          git show origin/{{DEFAULT_BRANCH}}:.claude-plugin/marketplace.json > /tmp/base.json 2>/dev/null || echo '{}' > /tmp/base.json
+          node -e '
+            const base = require("/tmp/base.json").renames || {};
+            const head = require("./.claude-plugin/marketplace.json").renames || {};
+            const dropped = Object.keys(base).filter(k => !(k in head));
+            if (dropped.length) {
+              console.error("renames entries removed:", dropped.join(", "));
+              process.exit(1);
+            }
+          '

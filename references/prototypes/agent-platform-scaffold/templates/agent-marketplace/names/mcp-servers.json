@@ -1,0 +1,6 @@
+{
+  "_comment": "MCP server names are globally unique across the catalog. MCP resolves last-wins, so a later plugin captures an earlier plugin's server with only a warning. One name, one owner, enforced in CI.",
+  "reserved": [
+    { "server": "{{PLATFORM_PREFIX}}-example", "plugin": "{{PLATFORM_PREFIX}}-core", "owner": "{{OWNER_NAME}}" }
+  ]
+}

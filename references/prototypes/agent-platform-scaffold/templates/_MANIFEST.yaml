@@ -1,0 +1,105 @@
+# Blueprint catalog. scripts/scaffold reads this.
+version: 1
+
+variables:
+  required: [ORG, PLATFORM_PREFIX, MARKETPLACE_NAME, OWNER_NAME]
+  optional:
+    OWNER_EMAIL:    { from: "git config user.email" }
+    DEFAULT_BRANCH: { default: main }
+    SEED_PATH:      { default: /opt/agent-seed }
+    DEPT:           { prompt: "department slug, e.g. vet" }
+    DEPT_DOMAIN:    { prompt: "department plugin domain, e.g. pims" }
+
+blueprints:
+
+  agent-marketplace:
+    emits: repository
+    phase: 0
+    owner: platform
+    summary: >-
+      Published catalog. Holds a generated manifest, the name registries, and the
+      assembly workflows. Nothing else.
+    uses: [ORG, MARKETPLACE_NAME, OWNER_NAME, OWNER_EMAIL, DEFAULT_BRANCH]
+    references: [agent-plugins, agent-presets, department-plugins]
+
+  agent-plugins:
+    emits: repository
+    phase: 0
+    owner: platform
+    summary: >-
+      Core plugin monorepo and the working half of the reference architecture.
+      Contains the exemplar plugin every other plugin is modelled on.
+    uses: [ORG, PLATFORM_PREFIX, OWNER_NAME, DEFAULT_BRANCH]
+    referenced_by: [agent-marketplace, agent-presets, department-plugins]
+
+  plugin-template:
+    emits: repository
+    phase: 0
+    owner: platform
+    summary: >-
+      Template repository used through `gh repo create --template`. Passes validation
+      on first clone.
+    uses: [ORG, PLATFORM_PREFIX, DEFAULT_BRANCH]
+
+  agent-presets:
+    emits: repository
+    phase: 1
+    owner: shared
+    summary: >-
+      Curated role-shaped bundles composed from existing skills by symlink. Almost no
+      original content.
+    uses: [ORG, PLATFORM_PREFIX, DEFAULT_BRANCH]
+    references: [agent-plugins]
+
+  department-plugins:
+    emits: repository
+    phase: 1
+    owner: department
+    repeatable: true
+    summary: >-
+      One per department. Owned outright by that team, referenced by the marketplace
+      through a github source.
+    uses: [ORG, DEPT, DEPT_DOMAIN, PLATFORM_PREFIX, DEFAULT_BRANCH]
+    references: [agent-plugins, agent-marketplace]
+
+  agent-platform-docs:
+    emits: repository
+    phase: 1
+    owner: platform
+    summary: >-
+      The platform knowledge base: concept docs, decision records, guides, examples,
+      copyable templates, and committed spec snapshots under references/specs with
+      provenance in SOURCES.md. Ships its own kb skill and the design tokens. Plain
+      markdown throughout, readable without a build step.
+    uses: [ORG, PLATFORM_PREFIX]
+    references: [agent-plugins, plugin-template]
+
+  agent-seed:
+    emits: repository
+    phase: 2
+    owner: platform
+    summary: >-
+      Builds the plugin seed directory baked into container images, so containers start
+      with the catalog present and clone nothing at runtime.
+    uses: [ORG, MARKETPLACE_NAME, PLATFORM_PREFIX, SEED_PATH]
+    references: [agent-marketplace, consuming-repo]
+
+  consuming-repo:
+    emits: fragments
+    phase: 2
+    owner: any team
+    summary: >-
+      Not a repository. The files an ordinary product repository gains once the platform
+      exists. Copy the fragments individually.
+    uses: [ORG, MARKETPLACE_NAME, PLATFORM_PREFIX, SEED_PATH]
+    references: [agent-marketplace, agent-seed]
+
+  skills-studio:
+    emits: repository
+    phase: 3
+    owner: platform
+    summary: >-
+      Authoring, evaluation, promotion, and estate scanning. Deliberately last: the gate
+      cannot be designed correctly until real submissions show what goes wrong.
+    uses: [ORG, MARKETPLACE_NAME]
+    references: [agent-marketplace, plugin-template, consuming-repo]

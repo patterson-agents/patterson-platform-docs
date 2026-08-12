@@ -1,0 +1,12 @@
+{
+  "name": "[TBD] project name",
+  "build": { "dockerfile": "Dockerfile" },
+  "mounts": [
+    "source=claude-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "CLAUDE_CODE_PLUGIN_SEED_DIR": "{{SEED_PATH}}"
+  },
+  "remoteUser": "node"
+}

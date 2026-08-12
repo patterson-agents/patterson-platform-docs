@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npx --yes @anthropic-ai/claude-code plugin validate . --strict
+      - name: No unfilled markers on the default branch
+        if: github.ref == 'refs/heads/{{DEFAULT_BRANCH}}'
+        run: |
+          if grep -rn "\[TBD" --include="*.md" --include="*.json" .; then
+            echo "unfilled [TBD] markers remain"
+            exit 1
+          fi

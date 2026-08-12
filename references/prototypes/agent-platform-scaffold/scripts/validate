@@ -1,0 +1,73 @@
+#!/usr/bin/env bun
+// Check a scaffolded tree: placeholder leakage, JSON validity, name collisions,
+// and unfilled decision markers.
+
+import { readdir, readFile, stat } from "node:fs/promises";
+import { join, relative } from "node:path";
+
+const root = Bun.argv[2];
+if (!root) {
+  console.error("Usage: scripts/validate <scaffolded-dir>");
+  process.exit(1);
+}
+
+async function walk(dir: string, out: string[] = []): Promise<string[]> {
+  for (const e of await readdir(dir, { withFileTypes: true })) {
+    if (e.name === "node_modules" || e.name === ".git") continue;
+    const p = join(dir, e.name);
+    if (e.isDirectory()) await walk(p, out);
+    else out.push(p);
+  }
+  return out;
+}
+
+const errors: string[] = [];
+const warnings: string[] = [];
+const files = await walk(root);
+
+for (const f of files) {
+  const rel = relative(root, f);
+  const body = await readFile(f, "utf8").catch(() => "");
+
+  const leaked = [...body.matchAll(/\{\{([A-Z_]+)\}\}/g)].map((m) => m[1]);
+  if (leaked.length) errors.push(`${rel}: unsubstituted ${[...new Set(leaked)].join(", ")}`);
+
+  const tbd = (body.match(/\[TBD/g) ?? []).length;
+  if (tbd) warnings.push(`${rel}: ${tbd} unfilled [TBD] marker${tbd > 1 ? "s" : ""}`);
+
+  if (f.endsWith(".json")) {
+    try {
+      JSON.parse(body);
+    } catch (e) {
+      errors.push(`${rel}: invalid JSON (${(e as Error).message})`);
+    }
+  }
+}
+
+// Cross-check published slugs against the reservation registry when both are present.
+const mk = files.find((f) => f.endsWith(".claude-plugin/marketplace.json"));
+const slugs = files.find((f) => f.endsWith("names/plugin-slugs.json"));
+if (mk && slugs) {
+  try {
+    const published = JSON.parse(await readFile(mk, "utf8")).plugins?.map((p: any) => p.name) ?? [];
+    const reserved = JSON.parse(await readFile(slugs, "utf8")).reserved?.map((r: any) => r.slug) ?? [];
+    const gap = published.filter((n: string) => !reserved.includes(n));
+    if (gap.length) errors.push(`marketplace.json publishes unreserved slugs: ${gap.join(", ")}`);
+    const dupes = published.filter((n: string, i: number) => published.indexOf(n) !== i);
+    if (dupes.length) errors.push(`duplicate plugin names: ${[...new Set(dupes)].join(", ")}`);
+  } catch {
+    // JSON errors already reported above
+  }
+}
+
+for (const w of warnings) console.log(`warn  ${w}`);
+for (const e of errors) console.error(`error ${e}`);
+
+console.log(
+  `\n${files.length} files, ${errors.length} error${errors.length === 1 ? "" : "s"}, ` +
+    `${warnings.length} warning${warnings.length === 1 ? "" : "s"}`,
+);
+if (warnings.length && !errors.length) {
+  console.log("Warnings are expected until the [TBD] markers are filled in.");
+}
+process.exit(errors.length ? 1 : 0);

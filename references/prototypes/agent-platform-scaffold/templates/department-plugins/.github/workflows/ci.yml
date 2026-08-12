@@ -1,0 +1,12 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  validate:
+    # Reuses the shared workflow from the platform org, so every department runs
+    # identical checks without maintaining a copy that drifts.
+    uses: {{ORG}}/agent-marketplace/.github/workflows/validate.yml@{{DEFAULT_BRANCH}}

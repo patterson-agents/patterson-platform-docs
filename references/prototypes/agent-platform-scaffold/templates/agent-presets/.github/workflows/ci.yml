@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate presets from an installed copy
+        # Local-path installs preserve only own-directory symlinks, so validating the
+        # working tree would pass while the published artifact silently loses skills.
+        run: |
+          claude plugin marketplace add {{ORG}}/agent-marketplace || true
+          for p in presets/*/; do
+            name=$(node -p "require('./$p/.claude-plugin/plugin.json').name")
+            claude plugin install "$name@{{MARKETPLACE_NAME}}" --scope local
+            npx --yes @anthropic-ai/claude-code plugin validate "$p" --strict
+          done
+
+      - name: Every skill resolved to real content
+        run: |
+          # A dangling entry here means a symlink pointed outside the marketplace and
+          # was skipped for security.
+          for p in presets/*/skills/*; do
+            [ -e "$p" ] || { echo "unresolved: $p"; exit 1; }
+          done

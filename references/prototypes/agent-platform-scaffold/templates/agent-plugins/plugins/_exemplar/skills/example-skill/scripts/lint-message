@@ -1,0 +1,20 @@
+#!/usr/bin/env bun
+// Invoked by the skill rather than loaded into context.
+// Reference from SKILL.md as ${CLAUDE_PLUGIN_ROOT}/skills/example-skill/scripts/lint-message
+
+const message = await Bun.stdin.text();
+const [subject = "", blank = "", ...body] = message.split("\n");
+const problems: string[] = [];
+
+if (subject.length > 60) problems.push(`subject is ${subject.length} chars, limit is 60`);
+if (subject.endsWith(".")) problems.push("subject ends with a period");
+if (body.length && blank.trim() !== "") problems.push("no blank line between subject and body");
+
+const prefix = process.env.CLAUDE_PLUGIN_OPTION_TICKET_PREFIX ?? "[TBD]";
+if (!message.includes(`Refs: ${prefix}-`)) problems.push(`missing "Refs: ${prefix}-NNNN" trailer`);
+
+if (problems.length) {
+  console.error(problems.map((p) => `- ${p}`).join("\n"));
+  process.exit(1);
+}
+console.log("ok");

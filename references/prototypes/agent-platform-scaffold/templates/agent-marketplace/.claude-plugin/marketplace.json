@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agent-plugins.org/schema/marketplace/v1.0.0.json",
+  "name": "{{MARKETPLACE_NAME}}",
+  "owner": {
+    "name": "{{OWNER_NAME}}",
+    "email": "{{OWNER_EMAIL}}"
+  },
+  "allowCrossMarketplaceDependenciesOn": [],
+  "renames": {},
+  "plugins": [
+    {
+      "name": "{{PLATFORM_PREFIX}}-conventions",
+      "description": "House conventions for commits, pull requests, and review",
+      "source": {
+        "source": "github",
+        "repo": "{{ORG}}/agent-plugins",
+        "path": "plugins/conventions"
+      }
+    },
+    {
+      "name": "{{PLATFORM_PREFIX}}-core",
+      "description": "Shared skills most other plugins depend on",
+      "source": {
+        "source": "github",
+        "repo": "{{ORG}}/agent-plugins",
+        "path": "plugins/core"
+      }
+    },
+    {
+      "name": "{{PLATFORM_PREFIX}}-preset-backend",
+      "description": "Curated bundle for backend service work",
+      "defaultEnabled": false,
+      "source": {
+        "source": "github",
+        "repo": "{{ORG}}/agent-presets",
+        "path": "presets/backend"
+      }
+    }
+  ]
+}

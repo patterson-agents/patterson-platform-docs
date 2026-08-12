@@ -1,0 +1,4 @@
+# Per-directory ownership, so a plugin can change hands without moving repositories.
+*                           @{{ORG}}/platform-engineering
+/plugins/conventions/       @{{ORG}}/platform-engineering
+# /plugins/<name>/          @{{ORG}}/<team>

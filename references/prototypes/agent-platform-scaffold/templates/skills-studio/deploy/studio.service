@@ -1,0 +1,23 @@
+[Unit]
+Description=Skills Studio
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/skills-studio serve
+Environment=STUDIO_DATA=/var/lib/skills-studio
+Environment=STUDIO_MARKETPLACE_REPO={{ORG}}/agent-marketplace
+Restart=on-failure
+RestartSec=5s
+
+# The studio holds no secret beyond its GitHub App key and needs no privilege.
+DynamicUser=yes
+StateDirectory=skills-studio
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

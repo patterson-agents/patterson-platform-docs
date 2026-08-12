@@ -1,0 +1,12 @@
+{
+  "_comment": "TIER 3. Network egress, credentials, and tool surface. MCP resolves last-wins, so a later plugin captures this server name with only a warning. Reserve the name in the marketplace repository's names/mcp-servers.json before publishing.",
+  "mcpServers": {
+    "{{PLATFORM_PREFIX}}-example": {
+      "command": "bun",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/mcp-server"],
+      "env": {
+        "API_BASE": "${user_config.api_base}"
+      }
+    }
+  }
+}

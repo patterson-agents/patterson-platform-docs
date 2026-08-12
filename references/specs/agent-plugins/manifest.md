@@ -1,0 +1,61 @@
+---
+title: Plugin manifest
+description: Define portable plugin identity and metadata in root plugin.json.
+---
+
+# Plugin manifest
+
+
+
+Every Agent Plugin contains exactly one portable manifest at `plugin.json` in the plugin root. The document must be a JSON object and must declare the canonical schema identifier and a plugin name.
+
+## Minimal manifest [#minimal-manifest]
+
+```json title="plugin.json"
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "deployment.tools"
+}
+```
+
+The manifest schema is closed. Portable top-level fields are limited to:
+
+| Field         | Required | Purpose                                                                                  |
+| ------------- | :------: | ---------------------------------------------------------------------------------------- |
+| `$schema`     |    Yes   | Selects the complete Agent Plugins validation and interpretation contract.               |
+| `name`        |    Yes   | Human-readable plugin name and package identifier.                                       |
+| `version`     |    No    | Plugin version; Semantic Versioning is recommended.                                      |
+| `description` |    No    | Short description of the plugin.                                                         |
+| `author`      |    No    | Object containing optional `name`, `email`, and `url` strings.                           |
+| `homepage`    |    No    | Documentation or homepage string.                                                        |
+| `repository`  |    No    | Source repository string.                                                                |
+| `license`     |    No    | License string; an [SPDX license identifier](https://spdx.org/licenses/) is recommended. |
+| `keywords`    |    No    | Array of search and discovery strings.                                                   |
+| `extensions`  |    No    | Client-owned data keyed by reverse-domain namespace.                                     |
+
+Metadata strings are not rejected merely because they fail URL, email, Semantic Versioning, or SPDX syntax. Their JSON types remain mandatory.
+
+## Name constraints [#name-constraints]
+
+Plugin names are 1–64 characters and use only lowercase ASCII letters, digits, hyphens, and periods. They begin and end with an alphanumeric character and cannot contain `--` or `..`.
+
+**Valid:** `my-plugin`, `acme.tools`, `lint3r`
+
+**Invalid:** `My-Plugin`, `-start`, `has--double`, `too.many..dots`
+
+## Unknown and invalid fields [#unknown-and-invalid-fields]
+
+An unknown top-level field is a schema violation, but it does not invalidate an otherwise valid plugin: a client reports and ignores that field. Client-specific data belongs under `extensions`.
+
+Other manifest schema violations are fatal. A client rejects the plugin without discovering or executing its components.
+
+## Canonical schema [#canonical-schema]
+
+Download [`plugin.schema.json`](/schemas/1.0.0/plugin.schema.json). The normative specification text governs if it conflicts with the machine-readable schema.
+
+
+---
+
+For a semantic overview of all documentation, see [/sitemap.md](/sitemap.md)
+
+For an index of all available documentation, see [/llms.txt](/llms.txt)

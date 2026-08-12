@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schema/plugin/v1.0.0.json",
+  "name": "{{PLATFORM_PREFIX}}-preset-[TBD-role]",
+  "displayName": "[TBD] Role name",
+  "description": "Curated bundle for [TBD] work",
+  "version": "0.1.0",
+  "defaultEnabled": false,
+
+  "_comment": "defaultEnabled false means this installs disabled until a team opts in, which keeps a broad install from quietly adding always-on token cost to every session.",
+
+  "dependencies": [
+    { "name": "{{PLATFORM_PREFIX}}-core", "version": "~0.1.0" }
+  ],
+
+  "userConfig": {
+    "service_root": {
+      "type": "directory",
+      "title": "Service root",
+      "description": "Where this team's services live, used by the scaffold skill",
+      "required": false
+    }
+  }
+}

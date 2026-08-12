@@ -1,0 +1,17 @@
+{
+  "_comment": "TIER 2. Hooks run shell commands at lifecycle events on every machine with this plugin enabled, without an explicit user action. Human review is mandatory regardless of author.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ["${CLAUDE_PLUGIN_ROOT}/scripts/guard"],
+            "_comment": "Exec form, an array. Shell-form commands reject ${user_config.*} substitution because the shell would run whatever the value contains. Read CLAUDE_PLUGIN_OPTION_<KEY> from the environment instead."
+          }
+        ]
+      }
+    ]
+  }
+}

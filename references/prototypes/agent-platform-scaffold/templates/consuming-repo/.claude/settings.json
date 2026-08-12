@@ -1,0 +1,13 @@
+{
+  "_comment": "Project-scope settings, committed so every collaborator gets them. NOTE: pluginConfigs entries here are ignored by design, because a cloned repository could otherwise inject values into hook commands and MCP server configs. enabledPlugins IS honored from project settings.",
+
+  "extraKnownMarketplaces": {
+    "{{MARKETPLACE_NAME}}": {
+      "source": { "source": "github", "repo": "{{ORG}}/agent-marketplace" }
+    }
+  },
+
+  "enabledPlugins": {
+    "{{PLATFORM_PREFIX}}-conventions@{{MARKETPLACE_NAME}}": true
+  }
+}

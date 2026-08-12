@@ -1,0 +1,10 @@
+[TBD] Implementation.
+
+Suggested layout, matching the four planes in the README:
+  author/    scaffold and lint, wrapping plugin-template
+  eval/      held-out splits, trigger rate, blind A/B against the prior version
+  govern/    promotion pull requests and the estate scan
+  observe/   installed version and adoption per harness
+
+Build the plane you need first. Govern is usually second, not first, because the checks
+worth automating only become clear after a few manual reviews.

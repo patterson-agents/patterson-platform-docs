@@ -1,0 +1,21 @@
+#!/bin/sh
+# POSIX bootstrap. Ensures Bun is available, since scaffold and validate are Bun
+# executables. Safe to run repeatedly.
+set -eu
+
+if command -v bun >/dev/null 2>&1; then
+  echo "bun $(bun --version) present"
+else
+  echo "bun not found, installing"
+  if command -v npm >/dev/null 2>&1; then
+    npm i -g bun@latest
+  else
+    curl -fsSL https://bun.sh/install | bash
+    echo "Add \$HOME/.bun/bin to PATH, then re-run this script."
+    exit 1
+  fi
+fi
+
+DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+chmod +x "$DIR/scaffold" "$DIR/validate"
+echo "ready: $DIR/scaffold --list"

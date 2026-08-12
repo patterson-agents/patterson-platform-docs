@@ -1,0 +1,20 @@
+{
+  "_comment": "Copied to /etc/claude-code/, the highest-precedence settings location. NOTE: because a Dockerfile lives in a repository, anyone with write access can delete the COPY step. Treat this as consistent defaults, not enforceable policy. Anything that must not be bypassed goes through server-managed settings or MDM.",
+
+  "extraKnownMarketplaces": {
+    "{{MARKETPLACE_NAME}}": {
+      "source": { "source": "github", "repo": "{{ORG}}/agent-marketplace" },
+      "autoUpdate": false,
+      "_comment": "Pinned by default. Claude Code admins can force auto-update here, but Copilot honors the opt-in only from a user's own settings, so the two populations drift unless both are pinned."
+    }
+  },
+
+  "enabledPlugins": {
+    "{{PLATFORM_PREFIX}}-conventions@{{MARKETPLACE_NAME}}": true,
+    "{{PLATFORM_PREFIX}}-core@{{MARKETPLACE_NAME}}": true
+  },
+
+  "strictKnownMarketplaces": [
+    { "hostPattern": "^github\\.com/{{ORG}}/" }
+  ]
+}
