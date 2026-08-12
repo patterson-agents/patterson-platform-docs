@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>patterson-platform-docs</title>
+<style>
+  :root {
+    --navy: #001B34;
+    --navy-2: #0A2A45;
+    --blue: #0065FF;
+    --blue-2: #055ABD;
+    --green: #7BFF1B;
+    --fg: #E8EEF4;
+    --fg-dim: #A9BBCB;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--navy);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  header img { height: 40px; width: 40px; }
+  h1 {
+    font-size: 1.75rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  p.tagline {
+    color: var(--fg-dim);
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+  }
+  .note {
+    background: var(--navy-2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left: 3px solid var(--green);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    color: var(--fg-dim);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  h2 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding-bottom: 0.4rem;
+    margin: 2.5rem 0 1rem;
+  }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin: 0 0 0.6rem; }
+  a {
+    color: var(--fg);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  a:hover { color: var(--blue); text-decoration: underline; }
+  .label { color: var(--fg-dim); font-size: 0.85rem; }
+  .card {
+    background: var(--navy-2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+  footer {
+    margin-top: 3rem;
+    color: var(--fg-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 1rem;
+  }
+  footer a { color: var(--fg-dim); display: inline; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="docs/assets/patterson-logo-square-navy.svg" alt="" style="filter: invert(1) brightness(2);">
+    <h1>patterson-platform-docs</h1>
+  </header>
+  <p class="tagline">The reference library behind the Patterson agent platform — vendor documentation, open specifications, and assessments captured with provenance.</p>
+
+  <div class="note">
+    This page is served by GitHub Pages from the repo root. Links below point at raw
+    <code>.md</code> files — Pages does not run a Markdown/Jekyll build for this site, so they
+    render as plain text in the browser, not formatted HTML. That is a known limitation, not a
+    bug; open the same paths on GitHub for rendered Markdown.
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0; border-bottom:none;">Start here</h2>
+    <ul>
+      <li><a href="https://github.com/patterson-agents/patterson-platform-docs">README <span class="label">on GitHub, rendered</span></a></li>
+    </ul>
+  </div>
+
+  <h2>Platform documentation — references/platforms/</h2>
+  <ul>
+    <li><a href="references/platforms/claude-code/">Claude Code <span class="label">28 files — marketplaces, settings, hooks, skills, sub-agents, MCP, env vars</span></a></li>
+    <li><a href="references/platforms/copilot/">GitHub Copilot <span class="label">18 files — org/enterprise policy, custom instructions, coding agent config</span></a></li>
+    <li><a href="references/platforms/vscode/">VS Code</a></li>
+    <li><a href="references/platforms/_SOURCES.md">Sources index <span class="label">URL + capture date per file</span></a></li>
+  </ul>
+
+  <h2>Open specifications — references/specs/</h2>
+  <ul>
+    <li><a href="references/specs/agent-skills/">Agent Skills</a></li>
+    <li><a href="references/specs/agent-plugins/">Agent Plugins</a></li>
+    <li><a href="references/specs/mcp/">Model Context Protocol</a></li>
+    <li><a href="references/specs/mcp-apps/">MCP Apps</a></li>
+    <li><a href="references/specs/a2ui/">A2UI</a></li>
+    <li><a href="references/specs/acp/">ACP</a></li>
+    <li><a href="references/specs/ahp/">AHP</a></li>
+    <li><a href="references/specs/stitch-design-md/">Stitch design.md</a></li>
+    <li><a href="references/specs/_SOURCES.md">Sources index</a></li>
+  </ul>
+
+  <h2>Assessments — references/assessments/</h2>
+  <ul>
+    <li><a href="references/assessments/existing-repos-assessment.md">Existing repos assessment</a></li>
+    <li><a href="references/assessments/dual-manifest-pattern.md">Dual manifest pattern</a></li>
+    <li><a href="references/assessments/agentics-and-gh-aw.md">Agentics and gh-aw</a></li>
+    <li><a href="references/assessments/patterson-sh-inventory.md">patterson-sh inventory</a></li>
+    <li><a href="references/assessments/_SOURCES.md">Sources index</a></li>
+  </ul>
+
+  <h2>Prototypes — references/prototypes/</h2>
+  <ul>
+    <li><a href="references/prototypes/agent-platform-scaffold/">Agent platform scaffold</a></li>
+  </ul>
+
+  <footer>
+    Deployed via GitHub Actions (deploy-from-Pages workflow). See
+    <a href="https://github.com/patterson-agents/patterson-platform-docs">the repo</a> for the
+    full, rendered index.
+  </footer>
+</main>
+</body>
+</html>
