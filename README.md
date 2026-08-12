@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="techdays-fy27-mark.png" alt="" width="80">
+<img src="docs/assets/banner.svg" width="100%" alt="Platform Docs — Patterson Companies">
+
+<img src="docs/assets/patterson-logo-square-navy.svg" width="56" alt="Patterson Companies">
+<img src="techdays-fy27-mark.png" alt="" width="56">
 
 # patterson-platform-docs
 
@@ -92,6 +95,13 @@ Architecture decision records for the platform. See also `patterson-corp/docs/de
 These are point-in-time captures. Before relying on one for a decision, check its date against how fast that surface moves — Claude Code and VS Code agent documentation change frequently; the open specs less so.
 
 When re-capturing, preserve the old file rather than overwriting it if a decision cites it.
+
+## Contributing and references
+
+| File | Purpose |
+|---|---|
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to add or refresh a captured document while keeping the provenance convention intact |
+| [`REFERENCES.md`](REFERENCES.md) | Index of every `_SOURCES.md` location — the authoritative table for each reference section |
 
 ---
 
