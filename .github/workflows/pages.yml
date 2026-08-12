@@ -21,13 +21,57 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install site dependencies
+        working-directory: site
+        run: bun install --frozen-lockfile
+
+      - name: Build reference-library content pipeline
+        run: node scripts/build-site-content.ts
+
+      - name: Build Starlight site
+        working-directory: site
+        run: bun run build
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
+      - name: Compose deploy artifact
+        run: |
+          set -euo pipefail
+          DIST=site/dist
+
+          # Raw markdown stays fetchable at its current references/** paths —
+          # docs.patterson.sh/references/... is a byte-identical passthrough of
+          # this repo, independent of how the Starlight build slugs its routes.
+          cp -r references "$DIST/references"
+
+          # The old hand-written index page is superseded by the Starlight
+          # site; keep it reachable at a legacy path rather than deleting it.
+          cp index.html "$DIST/legacy-index.html"
+
+          mkdir -p "$DIST/docs"
+          cp -r docs/assets "$DIST/docs/assets"
+
+          # Custom domain is already configured and verified at the repo
+          # settings level; a CNAME file in the artifact is a defensive
+          # belt-and-braces addition, not a requirement of the workflow-based
+          # Pages source.
+          echo 'docs.patterson.sh' > "$DIST/CNAME"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: site/dist
 
   deploy:
     needs: build
