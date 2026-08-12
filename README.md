@@ -19,6 +19,12 @@ Vendor documentation, open specifications, and assessments — captured with pro
 
 ---
 
+## Live site
+
+**[docs.patterson.sh](https://docs.patterson.sh)** — the reference library for agent platforms.
+
+<img src="docs/screenshots/site-home.webp" width="100%" alt="patterson-platform-docs documentation site home page">
+
 ## Why this exists
 
 Agent platforms are moving fast enough that documentation captured a month apart can disagree. When a decision in `patterson-corp` says "managed settings are winner-take-all" or "marketplace names are a flat namespace," it needs to be checkable against the source *as it read at the time* — not against a page that has since been rewritten.
